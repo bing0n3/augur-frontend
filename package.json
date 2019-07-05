@@ -10,13 +10,25 @@
   },
   "dependencies": {
     "@types/jquery": "^3.3.30",
+    "@types/lodash": "^4.14.135",
     "core-js": "^2.6.5",
+    "d3": "^5.9.7",
     "jquery": "^3.4.1",
+    "lodash": "^4.17.11",
+    "query-string": "^6.8.1",
+    "svgsaver": "^0.9.0",
+    "vega": "^5.4.0",
+    "vega-embed": "^4.2.1",
+    "vega-lite": "^2.7.0",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
+    "vue-multiselect": "^2.1.6",
     "vue-property-decorator": "^8.1.0",
     "vue-router": "^3.0.3",
-    "vuex": "^3.0.1"
+    "vue-spinners": "^1.0.2",
+    "vue-vega": "^1.0.0-alpha.13",
+    "vuex": "^3.0.1",
+    "shards-vue": "^1.0.7"
   },
   "devDependencies": {
     "@types/chai": "^4.1.0",
