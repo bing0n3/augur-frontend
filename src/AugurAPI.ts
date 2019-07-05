@@ -2,7 +2,7 @@ var $ = require('jquery')
 var _ = require('lodash')
 
 interface __reverseEndpointMap {
-  [key:string]: any; // Add index signature
+  [key: string]: any; // Add index signature
 }
 
 export default class AugurAPI {
@@ -17,14 +17,14 @@ export default class AugurAPI {
   getRepoGroups: any
   openRequests: number
   getMetricsStatus: any
-  getMetricsStatusMetadata:any
+  getMetricsStatusMetadata: any
   __endpointMap: any;
-  __reverseEndpointMap: { 
-    [key:string]: any// Add index signature
+  __reverseEndpointMap: {
+    [key: string]: any// Add index signature
   };
 
 
-  constructor (hostURL:string = 'http://' + window.location.host, version:string = '/api/unstable', autobatch:any = null) {
+  constructor(hostURL: string = 'http://' + window.location.host, version: string = '/api/unstable', autobatch: any = null) {
     this.__downloadedGitRepos = []
 
     this._version = version || '/api/unstable'
@@ -40,7 +40,7 @@ export default class AugurAPI {
     this.openRequests = 0
     this.getMetricsStatus = this.__EndpointFactory('metrics/status/filter')
     this.getMetricsStatusMetadata = this.__EndpointFactory('metrics/status/metadata')
-    this.__reverseEndpointMap = {} 
+    this.__reverseEndpointMap = {}
   }
 
   // __autobatcher (url, params, fireTimeout) {
@@ -61,11 +61,11 @@ export default class AugurAPI {
   //   })
   // }
 
-  __endpointURL (endpoint:string) {
+  __endpointURL(endpoint: string) {
     return '' + this._host + this._version + '/' + endpoint
   }
 
-  __URLFunctionFactory (url:string) {
+  __URLFunctionFactory(url: string) {
     var self = this
     return function (params: any, callback: any) {
       var cacheKey = window.btoa(url + JSON.stringify(params))
@@ -88,11 +88,11 @@ export default class AugurAPI {
     }
   }
 
-  __EndpointFactory (endpoint: string) {
+  __EndpointFactory(endpoint: string) {
     return this.__URLFunctionFactory(this.__endpointURL(endpoint))
   }
 
-  batch (endpoints: Array<String>) {
+  batch(endpoints: Array<String>) {
     let str = '[{"method": "GET", "path": "' + endpoints.join('"},{"method": "GET", "path": "') + '"}]'
     console.log(str)
     this.openRequests++
@@ -121,10 +121,10 @@ export default class AugurAPI {
     })
   }
 
-  batchMapped (repos: Array<AugurAPI>, fields: { forEach: (arg0: (field: any) => void) => void; }) {
+  batchMapped(repos: Array<AugurAPI>, fields: { forEach: (arg0: (field: any) => void) => void; }) {
     let endpoints: String[] | any[] = []
-    let reverseMap:any = {}
-    let processedData:any = {}
+    let reverseMap: any = {}
+    let processedData: any = {}
     repos.forEach((repo) => {
       // Array.prototype.push.apply(endpoints, repo.batch(fields, true))
       // _.assign(reverseMap, repo.__reverseEndpointMap)
@@ -136,8 +136,8 @@ export default class AugurAPI {
       })
     })
     console.log("before batch:", endpoints, reverseMap)
-    return this.batch(endpoints).then((data:any) => {
-      
+    return this.batch(endpoints).then((data: any) => {
+
       let newdat = new Promise((resolve, reject) => {
         if (Array.isArray(data)) {
           data.forEach((response) => {
@@ -145,8 +145,8 @@ export default class AugurAPI {
               processedData[reverseMap[response.path].owner] = {}
               processedData[reverseMap[response.path].owner][reverseMap[response.path].name] = []
               processedData[reverseMap[response.path].owner][reverseMap[response.path].name] = JSON.parse(response.response)
-              console.log("pdata after response", processedData, typeof(reverseMap[response.path].owner), typeof(reverseMap[response.path].name), JSON.parse(response.response), response.response)
-            } else if (reverseMap[response.path]){
+              console.log("pdata after response", processedData, typeof (reverseMap[response.path].owner), typeof (reverseMap[response.path].name), JSON.parse(response.response), response.response)
+            } else if (reverseMap[response.path]) {
               console.log('failed null')
               processedData[reverseMap[response.path].owner][reverseMap[response.path].name] = null
             }
@@ -163,7 +163,7 @@ export default class AugurAPI {
   }
 
 
-  Repo (repo: any) {
+  Repo(repo: any) {
     if (repo.githubURL) {
       let splitURL = repo.githubURL.split('/')
       if (splitURL.length < 3) {
@@ -187,15 +187,14 @@ export default class AugurAPI {
       }
     }
 
-    if (repo.owner && repo.name){
-      if (repo.repo_id == null || repo.repo_group_id == null){
+    if (repo.owner && repo.name) {
+      if (repo.repo_id == null || repo.repo_group_id == null) {
         let res: any = []
         $.ajax({
-          type:"GET",
-          url:this._version+ '/repos/'+repo.owner+'/'+repo.name,
-          async:false,
-          success:function (data: any)
-          {
+          type: "GET",
+          url: this._version + '/repos/' + repo.owner + '/' + repo.name,
+          async: false,
+          success: function (data: any) {
             res = data;
           }
         })
@@ -216,7 +215,7 @@ export default class AugurAPI {
     repo.__reverseEndpointMap = {}
 
     repo.getDownloadedStatus = () => {
-      this.getDownloadedGitRepos().then((data:any) => {
+      this.getDownloadedGitRepos().then((data: any) => {
         let rs = false
         data.forEach((gitURL: string) => {
           if (gitURL.includes('github.com')) {
@@ -232,12 +231,12 @@ export default class AugurAPI {
       })
     }
 
-    var __Endpoint = (r:any, name:string, url:string) => {
+    var __Endpoint = (r: any, name: string, url: string) => {
       r[name] = this.__URLFunctionFactory(url)
       return r[name]
     }
 
-    var Endpoint = (r:any, name:string, endpoint:string) => {
+    var Endpoint = (r: any, name: string, endpoint: string) => {
       var fullEndpoint = this._version + '/' + repo.owner + '/' + repo.name + '/' + endpoint
       var url = this._host + fullEndpoint
       r.__endpointMap[name] = fullEndpoint
@@ -245,7 +244,7 @@ export default class AugurAPI {
       return __Endpoint(r, name, url)
     }
 
-    var Timeseries = (r:any, jsName:string, endpoint:string) => {
+    var Timeseries = (r: any, jsName: string, endpoint: string) => {
       let func = Endpoint(r, jsName, 'timeseries/' + endpoint)
       // func.relativeTo = (baselineRepo:any, params:any, callback:any) => {
       //   var url = 'timeseries/' + endpoint + '/relative_to/' + baselineRepo.owner + '/' + baselineRepo.name
@@ -254,37 +253,37 @@ export default class AugurAPI {
       return func
     }
 
-    var GitEndpoint = (r: any, jsName:string, endpoint:string) => {
+    var GitEndpoint = (r: any, jsName: string, endpoint: string) => {
       var url = this.__endpointURL('git/' + endpoint + '/?repo_url_base=' + window.btoa(r.gitURL))
       return __Endpoint(r, jsName, url)
     }
 
-    var addRepoMetric = (r:any, jsName:string, endpoint:string) => {
-      var fullEndpoint = this._version + '/repo-groups/'+ repo.repo_group_id + '/repos/'+ repo.repo_id + '/' + endpoint
-      var url = this.__endpointURL('repo-groups/'+ repo.repo_group_id + '/repos/'+ repo.repo_id + '/' + endpoint)
-      var fullEndpoint = this._version +'/repo-groups/'+ repo.repo_group_id + '/repos/'+ repo.repo_id + '/' + endpoint
+    var addRepoMetric = (r: any, jsName: string, endpoint: string) => {
+      var fullEndpoint = this._version + '/repo-groups/' + repo.repo_group_id + '/repos/' + repo.repo_id + '/' + endpoint
+      var url = this.__endpointURL('repo-groups/' + repo.repo_group_id + '/repos/' + repo.repo_id + '/' + endpoint)
+      var fullEndpoint = this._version + '/repo-groups/' + repo.repo_group_id + '/repos/' + repo.repo_id + '/' + endpoint
       r.__endpointMap[jsName] = fullEndpoint
       r.__reverseEndpointMap[fullEndpoint] = { name: jsName, owner: repo.toString() }
       return __Endpoint(r, jsName, url)
     }
 
-    var addRepoGroupMetric = (r: any, jsName:string, endpoint:string) => {
-      var url = this.__endpointURL('repo-groups/'+ repo.repo_group_id + '/' + endpoint)
-      var fullEndpoint = this._version + '/' + 'repo-groups/'+ repo.repo_group_id  + '/' + endpoint
+    var addRepoGroupMetric = (r: any, jsName: string, endpoint: string) => {
+      var url = this.__endpointURL('repo-groups/' + repo.repo_group_id + '/' + endpoint)
+      var fullEndpoint = this._version + '/' + 'repo-groups/' + repo.repo_group_id + '/' + endpoint
       r.__endpointMap[jsName] = fullEndpoint
       r.__reverseEndpointMap[fullEndpoint] = { name: jsName, owner: repo.toString() }
       return __Endpoint(r, jsName, url)
     }
 
     repo.batch = (jsNameArray: Array<string>, noExecute: boolean) => {
-      var routes = jsNameArray.map((e:any) => { return repo.__endpointMap[e] })
+      var routes = jsNameArray.map((e: any) => { return repo.__endpointMap[e] })
       if (noExecute) {
         return routes
       }
       return this.batch(routes).then((data: any) => {
         return new Promise((resolve, reject) => {
           if (Array.isArray(data)) {
-            let mapped: {[key:string]:any} = {}
+            let mapped: { [key: string]: any } = {}
             console.log()
             data.forEach(response => {
               if (response.status === 200) {
