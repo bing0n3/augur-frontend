@@ -1,20 +1,25 @@
 import queryString from 'query-string';
 import Vuex from 'vuex';
 import AugurStats from './AugurStats';
-import AugurAPI from './AugurAPI';
+// import AugurAPI from './AugurAPI';
 import VueRouter from 'vue-router'
 import Vue from 'vue';
-const ShardsVue = require('shards-vue')
+// import ShardsVue from 'shards-vue';
 const VueSpinners = require('vue-spinners')
 import App from './App.vue';
+// import store from "@/store";
+import AugurAPI from '@/AugurAPI';
+import ShardsVue from 'shards-vue';
+
 
 declare global{
   interface Window { 
     vegaLite: any;
     vega: any;
     vegaEmbed: any;
+    VueVega: any;
     // VueSpinners: any;
-    // ShardsVue: any;
+    ShardsVue: any;
     VueRouter: any;
     SvgSaver: any;
     d3: any;
@@ -22,8 +27,7 @@ declare global{
     $: any;
     // AugurStats: any;
     AugurRepos: {[key:string]:any};
-    AugurAPI: any;
-    VueVega: any;
+    AugurAPI: AugurAPI;
     // Vuex: any;
     // Vue: any;
     jQuery: any;
@@ -47,7 +51,7 @@ export default function Augur () {
   // window.Vue = require('vue')
   // window.Vuex = require('vuex')
   window.VueVega = require('vue-vega').default
-  // let AugurAPI = require('AugurAPI').default
+  // let AugurAPI = require('@/AugurAPI').default
   window.AugurAPI = new AugurAPI()
   window.AugurRepos = {}
   window.$ = window.jQuery
@@ -55,10 +59,10 @@ export default function Augur () {
   window.d3 = require('d3')
   window.SvgSaver = require('svgsaver')
   // window.VueRouter = require('vue-router')
-  // window.ShardsVue = require('shards-vue')
+ 
   // window.VueSpinners = require('vue-spinners')
 
-  let router = require('./router.ts').default
+  // let router = require('./router.ts').default
   window.vegaEmbed = require('vega-embed')
   window.vega = require('vega')
   window.vegaLite = require('vega-lite')
@@ -68,7 +72,6 @@ export default function Augur () {
     dullColors: ['#CCCCCC', '#CCE7F2', '#D4F0B0', '#D8C3E3']
   }
 
-  // let AugurApp = require('./components/AugurApp')
 
   Vue.use(ShardsVue);
   Vue.use(VueSpinners);
@@ -77,7 +80,8 @@ export default function Augur () {
   Vue.use(VueRouter)
   Vue.config.productionTip = false
 
-  window.augur = new Vuex.Store({
+  let router = require('@/router').default
+  let store  = new Vuex.Store({
     state : {
       hasState: false,
       tab: 'gmd',
@@ -268,6 +272,8 @@ export default function Augur () {
     } // end mutations
   })
 
+  let AugurApp = require('./components/AugurApp')
+  window.augur = store
   // AugurApp.store = window.augur
 
   // router.beforeEach((to:any, from:any, next:any) => {
@@ -330,9 +336,8 @@ export default function Augur () {
   // })
 
   window.AugurApp = new Vue({
-    // components: { AugurApp },
-    // store: window.augur,
     router,
+    store,
     render: h => h(App)
 
   }).$mount('#app')
@@ -350,7 +355,7 @@ export default function Augur () {
   //   payload.gitURL = window.atob(parsed.git)
   //   hasState = 1
   // }
-  // if (hasState) {
+  // if (hasState) {  
   //   window.AugurApp.$store.commit('setRepo', payload)
   // }
   // if (parsed.comparedTo) {

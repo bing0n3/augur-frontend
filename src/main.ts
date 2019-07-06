@@ -23,4 +23,4 @@
 //   console.log(data)
 // })
 
-require('./Augur').default()
+require('./Augur').default();
