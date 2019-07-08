@@ -1,15 +1,10 @@
 import queryString from 'query-string';
 import Vuex from 'vuex';
-import AugurStats from './AugurStats';
-// import AugurAPI from './AugurAPI';
 import VueRouter from 'vue-router'
 import Vue from 'vue';
-// import ShardsVue from 'shards-vue';
-const VueSpinners = require('vue-spinners')
-import App from './App.vue';
-// import store from "@/store";
-import AugurAPI from '@/AugurAPI';
-import ShardsVue from 'shards-vue';
+import App from '@/components/AugurApp.vue';
+
+
 
 
 declare global{
@@ -18,54 +13,45 @@ declare global{
     vega: any;
     vegaEmbed: any;
     VueVega: any;
-    // VueSpinners: any;
+    VueSpinners: any;
     ShardsVue: any;
     VueRouter: any;
     SvgSaver: any;
     d3: any;
     _: any;
     $: any;
-    // AugurStats: any;
+    AugurStats: any;
     AugurRepos: {[key:string]:any};
-    AugurAPI: AugurAPI;
-    // Vuex: any;
-    // Vue: any;
+    AugurAPI: any;
+    Vuex: any;
+    Vue: Vue.VueConstructor;
     jQuery: any;
     augur: any;
     AUGUR_CHART_STYLE: any;
-    AugurApp: Vue;
+    AugurApp: any;
   }
 }
-// import AugurApp from './components/AugurApp.vue'
-// import router from './router/router'
-// import AugurCards from './components/AugurCards.vue'
-// import Vue from 'vue';
-// import ShardsVue from "shards-vue";
-// Vue.use(ShardsVue);\
-// import { Button } from 'shards-vue/src/components'
-// Vue.use(Button)
-// import router from './router';
 
 export default function Augur () {
   window.jQuery = require('jquery')
-  // window.Vue = require('vue')
-  // window.Vuex = require('vuex')
+  window.Vue = Vue
+  window.Vuex = Vuex
   window.VueVega = require('vue-vega').default
-  // let AugurAPI = require('@/AugurAPI').default
+  let AugurAPI = require('@/AugurAPI').default
   window.AugurAPI = new AugurAPI()
   window.AugurRepos = {}
+  window.AugurStats = require('@/AugurStats').default
   window.$ = window.jQuery
   window._ = require('lodash')
   window.d3 = require('d3')
   window.SvgSaver = require('svgsaver')
-  // window.VueRouter = require('vue-router')
- 
-  // window.VueSpinners = require('vue-spinners')
-
-  // let router = require('./router.ts').default
+  window.VueRouter = VueRouter
+  window.ShardsVue = require('shards-vue')
+  window.VueSpinners = require('vue-spinners')
   window.vegaEmbed = require('vega-embed')
   window.vega = require('vega')
   window.vegaLite = require('vega-lite')
+
 
   window.AUGUR_CHART_STYLE = {
     brightColors: ['#FF3647', '#007BFF', '#DAFF4D', '#B775FF'],
@@ -73,12 +59,12 @@ export default function Augur () {
   }
 
 
-  Vue.use(ShardsVue);
-  Vue.use(VueSpinners);
-  Vue.use(Vuex)
-  Vue.use(window.VueVega)
-  Vue.use(VueRouter)
-  Vue.config.productionTip = false
+  window.Vue.use(window.ShardsVue);
+  window.Vue.use(window.VueSpinners);
+  window.Vue.use(window.Vuex)
+  window.Vue.use(window.VueVega)
+  window.Vue.use(window.VueRouter)
+  window.Vue.config.productionTip = false
 
   let router = require('@/router').default
   let store  = new Vuex.Store({
@@ -276,66 +262,66 @@ export default function Augur () {
   window.augur = store
   // AugurApp.store = window.augur
 
-  // router.beforeEach((to:any, from:any, next:any) => {
-  //   if (to.params.repo || to.params.groupid){
-  //     if (!to.params.groupid && !to.params.comparedrepo){
-  //       AugurApp.store.commit("resetTab")
-  //       AugurApp.store.commit('setTab', {
-  //         tab: to.name
-  //       })
-  //       if (to.params.repo.includes('github') || to.params.repo.split(".").length > 2) {
-  //         AugurApp.store.commit('setRepo', {
-  //           gitURL: to.params.repo
-  //         })
-  //       } else {
-  //         AugurApp.store.commit('setRepo', {
-  //           githubURL: to.params.owner + '/' + to.params.repo
-  //         })
-  //       }
-  //     } else if (to.params.comparedrepo && window.augur.state.comparedRepos.length == 0) { 
-  //       let tab = to.name
-  //       tab = tab.substring(0, tab.length-7)
-  //       AugurApp.store.commit("resetTab")
-  //       AugurApp.store.commit('setTab', {
-  //         tab
-  //       })
-  //       AugurApp.store.commit('setRepo', {
-  //           githubURL: to.params.owner + '/' + to.params.repo
-  //         })
-  //       AugurApp.store.commit('addComparedRepo', {
-  //         githubURL: to.params.comparedowner + '/' + to.params.comparedrepo
-  //       })
-  //     } else if (to.params.groupid && window.augur.state.comparedRepos.length == 0){
-  //       AugurApp.store.commit("resetTab")
-  //       let tab = to.name
-  //       tab = tab.substring(0, tab.length-5)
-  //       AugurApp.store.commit('setTab', {
-  //         tab
-  //       })
-  //       let repos = to.params.groupid.split('+')
-  //       if (repos[0].includes('github')) {
-  //         AugurApp.store.commit('setRepo', {
-  //           gitURL: repos[0]
-  //         })
-  //       } else {
-  //         AugurApp.store.commit('setRepo', {
-  //           githubURL: repos[0]
-  //         })
-  //       }
-  //       repos.shift()
-  //       // repos.pop()
-  //       repos.forEach((cmprepo:string) => {
-  //         AugurApp.store.commit('addComparedRepo', {
-  //           githubURL: cmprepo
-  //         })
-  //       })
-  //     }
-  //   }
+  router.beforeEach((to:any, from:any, next:any) => {
+    if (to.params.repo || to.params.groupid){
+      if (!to.params.groupid && !to.params.comparedrepo){
+        AugurApp.store.commit("resetTab")
+        AugurApp.store.commit('setTab', {
+          tab: to.name
+        })
+        if (to.params.repo.includes('github') || to.params.repo.split(".").length > 2) {
+          AugurApp.store.commit('setRepo', {
+            gitURL: to.params.repo
+          })
+        } else {
+          AugurApp.store.commit('setRepo', {
+            githubURL: to.params.owner + '/' + to.params.repo
+          })
+        }
+      } else if (to.params.comparedrepo && window.augur.state.comparedRepos.length == 0) { 
+        let tab = to.name
+        tab = tab.substring(0, tab.length-7)
+        AugurApp.store.commit("resetTab")
+        AugurApp.store.commit('setTab', {
+          tab
+        })
+        AugurApp.store.commit('setRepo', {
+            githubURL: to.params.owner + '/' + to.params.repo
+          })
+        AugurApp.store.commit('addComparedRepo', {
+          githubURL: to.params.comparedowner + '/' + to.params.comparedrepo
+        })
+      } else if (to.params.groupid && window.augur.state.comparedRepos.length == 0){
+        AugurApp.store.commit("resetTab")
+        let tab = to.name
+        tab = tab.substring(0, tab.length-5)
+        AugurApp.store.commit('setTab', {
+          tab
+        })
+        let repos = to.params.groupid.split('+')
+        if (repos[0].includes('github')) {
+          AugurApp.store.commit('setRepo', {
+            gitURL: repos[0]
+          })
+        } else {
+          AugurApp.store.commit('setRepo', {
+            githubURL: repos[0]
+          })
+        }
+        repos.shift()
+        // repos.pop()
+        repos.forEach((cmprepo:string) => {
+          AugurApp.store.commit('addComparedRepo', {
+            githubURL: cmprepo
+          })
+        })
+      }
+    }
 
-  //   next()
-  // })
+    next()
+  })
 
-  window.AugurApp = new Vue({
+  window.AugurApp = new window.Vue({
     router,
     store,
     render: h => h(App)

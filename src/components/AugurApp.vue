@@ -28,4 +28,18 @@ export default {
 @import "~shards-ui/dist/css/shards.css";
 @import "~quill/dist/quill.snow.css";
 @import "~bootstrap/dist/css/bootstrap.css";
+@import "~@/styles/app.4b014d92.css";
+@import "~@/styles/icon.css";
+@import "~@/styles/chunk-vendors.7677be57.css";
+
+</style>
+<style lang="stylus">
+@import "~@/styles/augur.styl";
+
+</style>
+
+<style lang="scss">
+@import "~@/styles/date-range.scss";
+</style>
+
 </style>
